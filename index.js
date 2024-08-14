@@ -26,7 +26,7 @@ const challengeStore = {};
 
 // User registration endpoint
 app.use("/register", (req, res) => {
-  const { username, password } = req.body; // Extract username and password from the request body
+  const { username, password } = req.body;
 
   // Generate a unique ID for the user (using timestamp as a simple method)
   const id = `user_${Date.now()}`;
@@ -37,10 +37,8 @@ app.use("/register", (req, res) => {
     password, // In a real application, you'd hash the password before storing it
   };
 
-  // Store the user in the userStore object
   userStore[id] = user;
 
-  // Respond with the user's unique ID
   return res.json({ id });
 });
 
@@ -63,6 +61,7 @@ app.post("/register-challenge", async (req, res) => {
   return res.json({ options: challengePayload });
 });
 
+// User register-verify endpoint
 app.post("/register-verify", async (req, res) => {
   const { userId, cred } = req.body;
 
@@ -80,12 +79,14 @@ app.post("/register-verify", async (req, res) => {
     response: cred,
   });
 
-  if (!verificationResult.verified) return res.json({ error: "could not verify" });
+  if (!verificationResult.verified)
+    return res.json({ error: "could not verify" });
   userStore[userId].passkey = verificationResult.registrationInfo;
 
   return res.json({ verified: true });
 });
 
+// User login-challenge endpoint
 app.post("/login-challenge", async (req, res) => {
   const { userId } = req.body;
 
@@ -102,6 +103,7 @@ app.post("/login-challenge", async (req, res) => {
   return res.json({ options: opts });
 });
 
+// User register-verify endpoint
 app.post("/login-verify", async (req, res) => {
   const { userId, cred } = req.body;
 
